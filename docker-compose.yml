@@ -1,0 +1,17 @@
+services:
+    app:
+        container_name: pycharm-python-interpreter
+        build:
+            context: .
+            dockerfile: Dockerfile
+        volumes:
+            - .:/app
+            - chdb_data:/opt/chdb_data:rw
+        working_dir: /app
+
+        tty: true
+        stdin_open: true
+        command: tail -f /dev/null
+
+volumes:
+    chdb_data:
