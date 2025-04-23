@@ -1,37 +1,239 @@
 from chdb.session import Session
 
+from python_data.data_row import DataRow
 
+
+# noinspection SqlNoDataSourceInspection
 class ChdbSource:
 
-    def __init__(self, table_name: str):
-        self.db_name = "mydb"
+    def __init__(self, db_name: str, table_name: str):
+        self.db_name = db_name
         self.table_name = table_name
         self.session = Session("/opt/chdb_data")
 
     def create_table(self):
-        self.session.query(f"CREATE DATABASE IF NOT EXISTS mydb ENGINE=Atomic")
-        self.session.query(f"USE {self.db_name}")
+        self.session.query(f"CREATE DATABASE IF NOT EXISTS {self.db_name}")
         self.session.query(f"""
-        CREATE TABLE IF NOT EXISTS {self.table_name} (
-            id UInt32,
-            name String
-            ) ENGINE = MergeTree()
-            ORDER BY id
+        CREATE TABLE IF NOT EXISTS {self.db_name}.{self.table_name}(
+            `event_app` String,
+            `event` String,
+            `event_date` Date DEFAULT toDate(event_time),
+            `event_time` DateTime,
+            `event_id` UInt32,
+            `string_00` String,
+            `string_01` String,
+            `string_02` String,
+            `string_03` String,
+            `string_04` String,
+            `string_05` String,
+            `string_06` String,
+            `string_07` String,
+            `string_08` String,
+            `string_09` String,
+            `string_10` String,
+            `string_11` String,
+            `string_12` String,
+            `string_13` String,
+            `string_14` String,
+            `string_15` String,
+            `string_16` String,
+            `string_17` String,
+            `string_18` String,
+            `string_19` String,
+            `float_00` Float64,
+            `float_01` Float64,
+            `float_02` Float64,
+            `float_03` Float64,
+            `float_04` Float64,
+            `float_05` Float64,
+            `float_06` Float64,
+            `float_07` Float64,
+            `float_08` Float64,
+            `float_09` Float64,
+            `float_10` Float64,
+            `float_11` Float64,
+            `float_12` Float64,
+            `float_13` Float64,
+            `float_14` Float64,
+            `float_15` Float64,
+            `float_16` Float64,
+            `float_17` Float64,
+            `float_18` Float64,
+            `float_19` Float64,
+            `string_20` String,
+            `string_21` String,
+            `string_22` String,
+            `string_23` String,
+            `string_24` String,
+            `string_25` String,
+            `string_26` String,
+            `string_27` String,
+            `string_28` String,
+            `string_29` String,
+            `float_20` Float64,
+            `float_21` Float64,
+            `float_22` Float64,
+            `float_23` Float64,
+            `float_24` Float64,
+            `float_25` Float64,
+            `float_26` Float64,
+            `float_27` Float64,
+            `float_28` Float64,
+            `float_29` Float64,
+            `event_context` String,
+            `event_tick` UInt32
+        )
+        ENGINE = ReplacingMergeTree(event_tick)
+        PARTITION BY toYYYYMM(event_date)
+        PRIMARY KEY (event_app, event, event_date, event_time)
+        ORDER BY (event_app, event, event_date, event_time, event_id)
+        SETTINGS index_granularity = 8192
         """)
 
-    def write_string(self):
+    def insert_row(self, row: DataRow):
         print("Writing string")
-        self.session.query(f"""
-            INSERT INTO {self.table_name} (*) VALUES
-                (1, 'string1'),
-                (2, 'string2'),
-                (3, 'string3')
-        """)
+        sql_querry = f"""
+            INSERT INTO {self.db_name}.{self.table_name} (
+            event_app,
+            event,
+            event_date,
+            event_time,
+            event_id,
+            string_00,
+            string_01,
+            string_02,
+            string_03,
+            string_04,
+            string_05,
+            string_06,
+            string_07,
+            string_08,
+            string_09,
+            string_10,
+            string_11,
+            string_12,
+            string_13,
+            string_14,
+            string_15,
+            string_16,
+            string_17,
+            string_18,
+            string_19,
+            float_00,
+            float_01,
+            float_02,
+            float_03,
+            float_04,
+            float_05,
+            float_06,
+            float_07,
+            float_08,
+            float_09,
+            float_10,
+            float_11,
+            float_12,
+            float_13,
+            float_14,
+            float_15,
+            float_16,
+            float_17,
+            float_18,
+            float_19,
+            string_20,
+            string_21,
+            string_22,
+            string_23,
+            string_24,
+            string_25,
+            string_26,
+            string_27,
+            string_28,
+            string_29,
+            float_20,
+            float_21,
+            float_22,
+            float_23,
+            float_24,
+            float_25,
+            float_26,
+            float_27,
+            float_28,
+            float_29,
+            event_context,
+            event_tick
+            ) VALUES (
+            '{row.event_app}',
+            '{row.event}',
+            '{row.event_date}',
+            '{row.event_time}',
+            '{row.event_id}',
+            '{row.string_00}',
+            '{row.string_01}',
+            '{row.string_02}',
+            '{row.string_03}',
+            '{row.string_04}',
+            '{row.string_05}',
+            '{row.string_06}',
+            '{row.string_07}',
+            '{row.string_08}',
+            '{row.string_09}',
+            '{row.string_10}',
+            '{row.string_11}',
+            '{row.string_12}',
+            '{row.string_13}',
+            '{row.string_14}',
+            '{row.string_15}',
+            '{row.string_16}',
+            '{row.string_17}',
+            '{row.string_18}',
+            '{row.string_19}',
+            '{row.float_00}',
+            '{row.float_01}',
+            '{row.float_02}',
+            '{row.float_03}',
+            '{row.float_04}',
+            '{row.float_05}',
+            '{row.float_06}',
+            '{row.float_07}',
+            '{row.float_08}',
+            '{row.float_09}',
+            '{row.float_10}',
+            '{row.float_11}',
+            '{row.float_12}',
+            '{row.float_13}',
+            '{row.float_14}',
+            '{row.float_15}',
+            '{row.float_16}',
+            '{row.float_17}',
+            '{row.float_18}',
+            '{row.float_19}',
+            '{row.string_20}',
+            '{row.string_21}',
+            '{row.string_22}',
+            '{row.string_23}',
+            '{row.string_24}',
+            '{row.string_25}',
+            '{row.string_26}',
+            '{row.string_27}',
+            '{row.string_28}',
+            '{row.string_29}',
+            '{row.float_20}',
+            '{row.float_21}',
+            '{row.float_22}',
+            '{row.float_23}',
+            '{row.float_24}',
+            '{row.float_25}',
+            '{row.float_26}',
+            '{row.float_27}',
+            '{row.float_28}',
+            '{row.float_29}',
+            '{row.event_context}',
+            '{row.event_tick}')
+            ;
+        """
+        self.session.query(sql_querry)
         print("Finished writing string")
 
-    def select_one_test(self):
-        self.session.query("SELECT 1;")
-
     def read_table(self):
-        result = self.session.query(f"SELECT * FROM {self.table_name};")
+        result = self.session.query(f"SELECT * FROM {self.db_name}.{self.table_name};")
         print(f"Table {self.table_name} contents: \n{result}")

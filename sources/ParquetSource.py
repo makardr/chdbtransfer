@@ -2,6 +2,8 @@ import pyarrow.parquet as pq
 import pyarrow as pa
 import pandas as pd
 
+from python_data.data_row import DataRow
+
 
 class ParquetSource:
     def __init__(self, source_path: str):
@@ -13,19 +15,24 @@ class ParquetSource:
         pd.set_option('display.max_columns', None)
         pd.set_option('display.max_colwidth', None)
 
-    def read_parquet(self):
+    def read_parquet_row(self) -> DataRow:
         column_names = self.schema.names
         print("Selected columns:", column_names)
 
-        # Read the first batch of 10 rows
         batch = next(self.parquet_file.iter_batches(batch_size=10))
+
+        table = pa.Table.from_batches([batch])
+        df = table.to_pandas()
+        print(df.to_string())
+
+        first_row = df.iloc[0].to_dict()
+        decoded_binary_row = {k: (v.decode('utf-8') if isinstance(v, bytes) else v) for k, v in first_row.items()}
+        event = DataRow(**decoded_binary_row)
+
+        print(event)
 
         # Non pandas method
         # rows = [dict(zip(batch.schema.names, row)) for row in zip(*[column.to_pylist() for column in batch.columns])]
         # for row in rows:
         #     print(row)
-
-
-        table = pa.Table.from_batches([batch])
-        df = table.to_pandas()
-        print(df.to_string())
+        return event

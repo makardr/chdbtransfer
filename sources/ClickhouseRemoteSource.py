@@ -1,4 +1,4 @@
-from wrap_timer import timer
+from util.wrap_timer import timer
 
 
 class ClickhouseRemoteSource:
