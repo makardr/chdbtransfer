@@ -1,4 +1,3 @@
-from dataclasses import dataclass
 from datetime import datetime
 
 
@@ -84,6 +83,9 @@ class DataRow:
         self.event_context: str = event_context
         self.event_tick: int = event_tick
 
+    @classmethod
+    def from_tuple(cls, data):
+        return cls(*data)
 
 
 testRow = DataRow(

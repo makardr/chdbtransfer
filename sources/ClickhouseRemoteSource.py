@@ -8,7 +8,7 @@ class ClickhouseRemoteSource:
 
     @timer
     def read_clickhouse_db(self):
-        query_result = self.source.query('SELECT * FROM default.events LIMIT 10')
+        query_result = self.source.query('SELECT * FROM default.events LIMIT 10000')
 
         results = []
         column_names = query_result.column_names
@@ -17,5 +17,5 @@ class ClickhouseRemoteSource:
             row_dict = {column_names[i]: value for i, value in enumerate(row)}
             results.append(row_dict)
 
-        print(results)
+        # print(results)
         return results

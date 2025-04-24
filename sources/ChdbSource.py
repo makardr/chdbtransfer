@@ -91,77 +91,8 @@ class ChdbSource:
         """)
 
     def insert_row(self, row: DataRow):
-        print("Writing string")
-        sql_querry = f"""
-            INSERT INTO {self.db_name}.{self.table_name} (
-            event_app,
-            event,
-            event_date,
-            event_time,
-            event_id,
-            string_00,
-            string_01,
-            string_02,
-            string_03,
-            string_04,
-            string_05,
-            string_06,
-            string_07,
-            string_08,
-            string_09,
-            string_10,
-            string_11,
-            string_12,
-            string_13,
-            string_14,
-            string_15,
-            string_16,
-            string_17,
-            string_18,
-            string_19,
-            float_00,
-            float_01,
-            float_02,
-            float_03,
-            float_04,
-            float_05,
-            float_06,
-            float_07,
-            float_08,
-            float_09,
-            float_10,
-            float_11,
-            float_12,
-            float_13,
-            float_14,
-            float_15,
-            float_16,
-            float_17,
-            float_18,
-            float_19,
-            string_20,
-            string_21,
-            string_22,
-            string_23,
-            string_24,
-            string_25,
-            string_26,
-            string_27,
-            string_28,
-            string_29,
-            float_20,
-            float_21,
-            float_22,
-            float_23,
-            float_24,
-            float_25,
-            float_26,
-            float_27,
-            float_28,
-            float_29,
-            event_context,
-            event_tick
-            ) VALUES (
+        sql_query = f"""
+            INSERT INTO {self.db_name}.{self.table_name} (*) VALUES (
             '{row.event_app}',
             '{row.event}',
             '{row.event_date}',
@@ -231,9 +162,28 @@ class ChdbSource:
             '{row.event_tick}')
             ;
         """
-        self.session.query(sql_querry)
-        print("Finished writing string")
+        self.session.query(sql_query)
+
+    def insert_records_into_chdb(self, records):
+        print("Inserting records into ChDB")
+        sql_query = f"""INSERT INTO {self.db_name}.{self.table_name} (*) VALUES"""
+
+        values_str = ",".join([
+            "(" + ", ".join(
+                f"'{str(item)}'" if isinstance(item, str) else str(item)
+                for item in record
+            ) + ")"
+            for record in records
+        ])
+        sql_query += values_str
+
+        self.session.query(sql_query)
+        print(f"Inserted {len(records)} records into ClickHouse")
 
     def read_table(self):
-        result = self.session.query(f"SELECT * FROM {self.db_name}.{self.table_name};")
+        result = self.session.query(f"SELECT * FROM {self.db_name}.{self.table_name} LIMIT 10000;")
         print(f"Table {self.table_name} contents: \n{result}")
+
+    def drop_table(self):
+        self.session.query(f"DROP TABLE IF EXISTS {self.db_name}.{self.table_name};")
+        print(f"Table {self.table_name} dropped")
