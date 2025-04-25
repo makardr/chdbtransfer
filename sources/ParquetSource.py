@@ -45,6 +45,8 @@ class ParquetSource:
                     df[column] = df[column].apply(lambda x: x.decode('utf-8') if isinstance(x, bytes) else x)
             chunk_records = df.to_records(index=False).tolist()
             records.extend(chunk_records)
+            # limit to one batch
+            break
 
         print(f"Finished reading {len(records)} records")
         return records

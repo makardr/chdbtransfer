@@ -1,4 +1,4 @@
-chdb~=3.1.2
+chdb~=3.2.0
 clickhouse-connect~=0.8.17
 pandas~=2.2.3
 pyarrow~=19.0.1

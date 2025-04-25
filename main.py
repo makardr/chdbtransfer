@@ -21,8 +21,10 @@ client = clickhouse_connect.get_client(
 )
 
 # remote clickhouse
-# clickhouseClient = ClickhouseRemoteSource(client)
+# clickhouseClient = ClickhouseRemoteSource(client, "default", "events")
 # clickhouseClient.read_clickhouse_db()
+# clickhouseClient.test_get_events_number_by_day()
+# clickhouseClient.test_get_events_sum()
 # client.close()
 # Program finished execution in 591.1539990011079
 
@@ -31,13 +33,20 @@ client = clickhouse_connect.get_client(
 # row = parquet_source.read_parquet_row()
 # records = parquet_source.read_parquet_records()
 
+
 # local chdb
-chdb_client = ChdbSource("mydb", "events")
+chdb_client = ChdbSource("default", "events")
+# chdb_client = ChdbSource("mytestdb", "testevents")
 # chdb_client.create_table()
 # chdb_client.drop_table()
-chdb_client.read_table()
 # Program finished execution in 422.26462500002526
+
+#
 # parquet_source.read_write_chdb(chdb_client)
+
+# chdb_client.read_table()
+chdb_client.test_get_events_number_by_day()
+# chdb_client.test_get_events_sum()
 
 # Insert rows by row
 # chdb_client.insert_row(row)
@@ -70,3 +79,5 @@ print(f"Program finished execution in {execution_time_ms}")
 # pycharm-python-interpreter  |              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 # pycharm-python-interpreter  | RuntimeError: Code: 62. DB::Exception: Code: 62. DB::Exception: Cannot parse expression of type String here: 'Status(StatusCode="Internal", Detail="Error starting gRPC call. MethodAccessException: Attempt to access method 'System.IDisposa', '', '', '', '', '', '', '', : While executing ValuesBlockInputFormat: data for INSERT was parsed from query. (SYNTAX_ERROR) (version 24.8.4.1). (SYNTAX_ERROR)
 # pycharm-python-interpreter exited with code 1
+
+client.close()
