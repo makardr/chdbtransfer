@@ -193,6 +193,13 @@ class ChdbSource:
         self.session.query(f"DROP TABLE IF EXISTS {self.db_name}.{self.table_name};")
         print(f"Table {self.table_name} dropped")
 
+    def write_parquet(self, parquet_path: str):
+        self.session.query(f"""
+                           INSERT INTO {self.db_name}.{self.table_name}
+                           SELECT *
+                           FROM file('{parquet_path}', Parquet)
+                           """)
+
     @timer
     def test_get_events_number_by_day(self):
         result = self.session.query(f"""SELECT
@@ -201,7 +208,7 @@ class ChdbSource:
             FROM {self.db_name}.{self.table_name}
             GROUP BY day
             ORDER BY day;""")
-        print(f"Table {self.table_name} contents: \n{result}")
+        # print(f"Table {self.table_name} contents: \n{result}")
 
     @timer
     def test_get_events_sum(self):
@@ -241,3 +248,10 @@ class ChdbSource:
             GROUP BY event_date
             ORDER BY event_date""")
         # print(f"Table {self.table_name} contents: \n{result}")
+
+    @timer
+    def test_select_date(self):
+        query_result = self.session.query(f"""SELECT *
+                        FROM {self.db_name}.{self.table_name}
+                        WHERE event_date = '2024-12-31'
+                        ORDER BY event_time;""")

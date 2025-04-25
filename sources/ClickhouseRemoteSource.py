@@ -38,10 +38,28 @@ class ClickhouseRemoteSource:
         # for row in query_result.result_rows:
         #     row_dict = {column_names[i]: value for i, value in enumerate(row)}
         #     results.append(row_dict)
-
+        #
         # for event in results:
-        #     print_line(event)
+        #     print(f"{event}\n")
         # print(results)
+
+    @timer
+    def test_select_date(self):
+        query_result = self.session.query(f"""SELECT *
+            FROM {self.db_name}.{self.table_name}
+            WHERE event_date = '2024-12-31'
+            ORDER BY event_time;""")
+
+        # results = []
+        # column_names = query_result.column_names
+        #
+        # for row in query_result.result_rows:
+        #     row_dict = {column_names[i]: value for i, value in enumerate(row)}
+        #     results.append(row_dict)
+        #
+        # for event in results:
+        #     print(f"{event}\n")
+
 
     @timer
     def test_get_events_sum(self):

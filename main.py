@@ -21,10 +21,11 @@ client = clickhouse_connect.get_client(
 )
 
 # remote clickhouse
-# clickhouseClient = ClickhouseRemoteSource(client, "default", "events")
+clickhouseClient = ClickhouseRemoteSource(client, "default", "events")
 # clickhouseClient.read_clickhouse_db()
-# clickhouseClient.test_get_events_number_by_day()
-# clickhouseClient.test_get_events_sum()
+clickhouseClient.test_get_events_number_by_day()
+clickhouseClient.test_get_events_sum()
+clickhouseClient.test_select_date()
 # client.close()
 # Program finished execution in 591.1539990011079
 
@@ -35,9 +36,10 @@ client = clickhouse_connect.get_client(
 
 
 # local chdb
-chdb_client = ChdbSource("default", "events")
+chdb_client = ChdbSource("local", "events")
 # chdb_client = ChdbSource("mytestdb", "testevents")
 # chdb_client.create_table()
+# chdb_client.write_parquet("./parquet_data/events.parquet")
 # chdb_client.drop_table()
 # Program finished execution in 422.26462500002526
 
@@ -46,7 +48,8 @@ chdb_client = ChdbSource("default", "events")
 
 # chdb_client.read_table()
 chdb_client.test_get_events_number_by_day()
-# chdb_client.test_get_events_sum()
+chdb_client.test_get_events_sum()
+chdb_client.test_select_date()
 
 # Insert rows by row
 # chdb_client.insert_row(row)
