@@ -10,12 +10,14 @@ from util.wrap_timer import timer
 # noinspection SqlNoDataSourceInspection
 class ChdbSource:
 
+    @timer
     def __init__(self, db_name: str, table_name: str):
         self.db_name = db_name
         self.table_name = table_name
         self.session = Session("/opt/chdb_data")
         # self.connection = chdb.connect("/opt/chdb_data")
 
+    @timer
     def create_table(self):
         self.session.query(f"CREATE DATABASE IF NOT EXISTS {self.db_name}")
         self.session.query(f"""
@@ -95,6 +97,7 @@ class ChdbSource:
         SETTINGS index_granularity = 8192
         """)
 
+    @timer
     def insert_row(self, row: DataRow):
         sql_query = f"""
             INSERT INTO {self.db_name}.{self.table_name} (*) VALUES (
@@ -255,3 +258,9 @@ class ChdbSource:
                         FROM {self.db_name}.{self.table_name}
                         WHERE event_date = '2024-12-31'
                         ORDER BY event_time;""")
+
+    @timer
+    def test_get_line(self):
+        query_result = self.session.query(f"""SELECT *
+                           FROM {self.db_name}.{self.table_name}
+                           LIMIT 1;""")
